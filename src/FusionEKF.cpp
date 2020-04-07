@@ -98,9 +98,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
         ekf_.x_ << 1, 1, 1, 1;
 
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-          // TODO: Convert radar from polar to cartesian coordinates
-          //         and initialize state.
-
+            // TODO: Convert radar from polar to cartesian coordinates
+            //         and initialize state.
+            ekf_.x_ << 0,
+                    0,
+                    0,
+                    0;
+            ekf_.P_ << 1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1000, 0,
+                    0, 0, 0, 1000;
         }
         else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
             // TODO: Initialize state.
@@ -127,6 +134,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // dt - expressed in seconds
     float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
     previous_timestamp_ = measurement_pack.timestamp_;
+    // std::cout << "dt = " << dt << std::endl;
 
     /**
     * Prediction
