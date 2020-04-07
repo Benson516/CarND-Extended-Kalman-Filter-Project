@@ -68,8 +68,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    y(1) = correct_angle_rad( y(1) );
    x_ += K * y;
    P_ -= K * H_ * P_;
-   //
-   x_(1) = correct_angle_rad( x_(1) );
 }
 
 // Angle correction
