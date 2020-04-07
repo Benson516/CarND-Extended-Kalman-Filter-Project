@@ -75,7 +75,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 // Angle correction
 float KalmanFilter::correct_angle_rad(float angle_in){
     // Correct the angle to (-pi, pi]
-    angle_mod = angle_in % pi_2; // [0, 2pi)
+    float angle_mod = fmod(angle_in, pi_2); // [0, 2pi)
     if (angle_mod > pi){
         angle_mod -= pi_2;
     }else if(angle_mod <= -pi){
