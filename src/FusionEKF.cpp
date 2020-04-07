@@ -161,7 +161,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     */
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    // TODO: Radar updates
+        // TODO: Radar updates
+        // Assign H_ and R_
+        Hj_ = tools.CalculateJacobian(ekf_.x_);
+        ekf_.H_ = Hj_;
+        ekf_.R_ = R_radar_;
+
+        // 4. Call the Kalman Filter update() function
+        //      with the most recent raw measurements_
+        ekf_.UpdateEKF( measurement_pack.raw_measurements_ );
 
     } else {
         // TODO: Laser updates

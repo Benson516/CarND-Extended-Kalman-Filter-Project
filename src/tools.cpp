@@ -54,16 +54,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float vy = x_state(3);
 
   // TODO: YOUR CODE HERE
-  float rho = (px*px + py*py);
+  float rho_2 = (px*px + py*py);
   // check division by zero
-  if ( fabs(rho) < 0.0001){
+  if ( fabs(rho_2) < 0.0001){
       std::cout << "CalculateJacobian () - Error - Division by Zero" << std::endl;
       return Hj;
   }
   // compute the Jacobian matrix
   float vxpy_vypx = vx*py - vy*px;
   float vypx_vxpy = -vxpy_vypx; // vy*px - vx*py; // -vxpy_vypx, Note: -0 will be consider "different" with 0 in checker
-  float inv_rho_2 = 1.0/rho;
+  float inv_rho_2 = 1.0/rho_2;
   float inv_rho = sqrt(inv_rho_2);
   float inv_rho_3 = inv_rho_2 * inv_rho;
   // CAlculate the Jacobian Hj
