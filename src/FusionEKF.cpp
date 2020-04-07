@@ -39,7 +39,7 @@ FusionEKF::FusionEKF() {
     H_laser_ << 1, 0, 0, 0,
                 0, 1, 0, 0;
 
-    Hj_ = tools.CalculateJacobian(ekf_.x_);
+    // Hj_ = tools.CalculateJacobian(ekf_.x_);
 
 
     // the initial transition matrix F_ (semi-initialization, template)
@@ -54,7 +54,7 @@ FusionEKF::FusionEKF() {
 
     // The following initializations are not neccessary
     // create a 4D state vector, we don't know yet the values of the x state
-    ekf.x_ = VectorXd(4);
+    ekf_.x_ = VectorXd(4);
     // state covariance matrix P
     ekf_.P_ = MatrixXd(4, 4);
 
