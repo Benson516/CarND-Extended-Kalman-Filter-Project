@@ -34,7 +34,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   }
 
   // calculate the mean
-  rmse = rmse/estimations.size();
+  rmse /= float(estimations.size());
   // calculate the squared root
   rmse = rmse.array().sqrt();
   // return the result
@@ -46,4 +46,29 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    * TODO:
    * Calculate a Jacobian here.
    */
+  MatrixXd Hj(3,4);
+  // recover state parameters
+  float px = x_state(0);
+  float py = x_state(1);
+  float vx = x_state(2);
+  float vy = x_state(3);
+
+  // TODO: YOUR CODE HERE
+  float rho = (px*px + py*py);
+  // check division by zero
+  if ( fabs(rho) < 0.0001){
+      cout << "CalculateJacobian () - Error - Division by Zero" << std::endl;
+      return Hj;
+  }
+  // compute the Jacobian matrix
+  float vxpy_vypx = vx*py - vy*px;
+  float vypx_vxpy = -vxpy_vypx; // vy*px - vx*py; // -vxpy_vypx, Note: -0 will be consider "different" with 0 in checker
+  float inv_rho_2 = 1.0/rho;
+  float inv_rho = sqrt(inv_rho_2);
+  float inv_rho_3 = inv_rho_2 * inv_rho;
+  // CAlculate the Jacobian Hj
+  Hj << inv_rho*px, inv_rho*py, 0, 0,
+        -inv_rho_2*py, inv_rho_2*px, 0, 0,
+        inv_rho_3*py*vxpy_vypx, inv_rho_3*px*vypx_vxpy, inv_rho*px, inv_rho*py;
+  return Hj;
 }
