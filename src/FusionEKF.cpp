@@ -109,6 +109,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                       measurement_pack.raw_measurements_[1],
                       0,
                       0;
+            ekf_.P_ << 1, 0, 0, 0,
+                      0, 1, 0, 0,
+                      0, 0, 1000, 0,
+                      0, 0, 0, 1000;
         }
 
         // Update the last timestamp
@@ -138,12 +142,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.F_(0,2) = dt;
     ekf_.F_(1,3) = dt;
     // 2. Set the process covariance matrix Q
-    float dt_2 = dt*dt;
-    float dt_3 = dt_2*dt;
-    float dt_4 = dt_3*dt;
+    float dt_2 = dt*dt; // dt**2
+    float dt_3 = dt_2*dt; // dt**3
+    float dt_4 = dt_3*dt; // dt**4
     //
-    float dt_3_2 = dt_3 * 0.5;
-    float dt_4_4 = dt_4 * 0.25;
+    float dt_3_2 = dt_3 * 0.5; // dt**3/2
+    float dt_4_4 = dt_4 * 0.25; // dt**4/4
     //
     ekf_.Q_ = MatrixXd(4,4);
     ekf_.Q_ << dt_4_4*noise_ax, 0, dt_3_2*noise_ax, 0,
@@ -168,6 +172,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     } else {
         // TODO: Laser updates
+        // Assign H_ and R_
+        ekf_.H_ = H_laser_
+        ekf_.R_ = R_laser_
+
         // 4. Call the Kalman Filter update() function
         //      with the most recent raw measurements_
         ekf_.Update( measurement_pack.raw_measurements_ );
