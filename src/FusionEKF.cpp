@@ -36,42 +36,27 @@ FusionEKF::FusionEKF() {
     * TODO: Finish initializing the FusionEKF.
     * TODO: Set the process and measurement noises
     */
-    // create a 4D state vector, we don't know yet the values of the x state
-    Eigen::VectorXd x_in = VectorXd(4);
+    H_laser_ << 1, 0, 0, 0,
+                0, 1, 0, 0;
 
-    // state covariance matrix P
-    Eigen::MatrixXd P_in = MatrixXd(4, 4);
-    P_in << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1000, 0,
-            0, 0, 0, 1000;
-
-    // the initial transition matrix F_
-    Eigen::MatrixXd F_in = MatrixXd(4, 4);
-    F_in << 1, 0, 1, 0,
-            0, 1, 0, 1,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
+    Hj_ = tools.CalculateJacobian(ekf_.x_);
 
 
+    // the initial transition matrix F_ (semi-initialization, template)
+    ekf_.F_ = MatrixXd(4, 4);
+    ekf_.F_ << 1, 0, 1, 0,
+                0, 1, 0, 1,
+                0, 0, 1, 0,
+                0, 0, 0, 1;
     // set the acceleration noise components
     noise_ax = 9.0;
     noise_ay = 9.0;
-    // process covariance matrix
-    Eigen::MatrixXd Q_in = MatrixXd(4,4);
-    float dt = 0.001; // 1ms
-    float dt_2 = dt*dt;
-    float dt_3 = dt_2*dt;
-    float dt_4 = dt_3*dt;
-    //
-    float dt_3_2 = dt_3 * 0.5;
-    float dt_4_4 = dt_4 * 0.25;
-    Q_in << dt_4_4*noise_ax, 0, dt_3_2*noise_ax, 0,
-            0,          dt_4_4*noise_ay, 0, dt_3_2*noise_ay,
-            dt_3_2*noise_ax, 0,  dt_2*noise_ax, 0,
-            0, dt_3_2*noise_ay,  0, dt_2*noise_ay;
-    //
-    ekf_.Init(x_in, P_in, F_in, H_laser_, R_laser_, Q_in);
+
+    // The following initializations are not neccessary
+    // create a 4D state vector, we don't know yet the values of the x state
+    ekf.x_ = VectorXd(4);
+    // state covariance matrix P
+    ekf_.P_ = MatrixXd(4, 4);
 
 
 }
