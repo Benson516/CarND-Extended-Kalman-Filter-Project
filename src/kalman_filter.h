@@ -64,6 +64,13 @@ class KalmanFilter {
 
   // measurement covariance matrix
   Eigen::MatrixXd R_;
+
+  // Angle correction
+  float correct_angle_rad(float angle_in);
+
+  // PI
+  float pi;
+  float pi_2;
 };
 
 #endif // KALMAN_FILTER_H_

@@ -8,7 +8,10 @@ using Eigen::VectorXd;
  *   VectorXd or MatrixXd objects with zeros upon creation.
  */
 
-KalmanFilter::KalmanFilter() {}
+KalmanFilter::KalmanFilter() {
+    pi = 3.141592653589793; // PI
+    pi_2 = 2.0*pi; // 2PI
+}
 
 KalmanFilter::~KalmanFilter() {}
 
@@ -52,7 +55,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    float vx = x_(2);
    float vy = x_(3);
    float rho = sqrt(px*px + py*py);
-   float phi = atan2(py, px);
+   float phi = atan2(py, px); // [-pi, pi]
    float rho_dot = (px*vx + py*vy)/rho;
    // The estimated measurement values from estimated states
    VectorXd z_est =  VectorXd(3);
@@ -61,6 +64,22 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    MatrixXd S = H_ * P_ * (H_.transpose()) + R_;
    MatrixXd K = P_ * (H_.transpose()) * (S.inverse());
    //new estimate
-   x_ += K * (z - z_est);
+   VectorXd y = z - z_est;
+   y(1) = correct_angle_rad( y(1) );
+   x_ += K * y;
    P_ -= K * H_ * P_;
+   //
+   x_(1) = correct_angle_rad( x_(1) );
+}
+
+// Angle correction
+float KalmanFilter::correct_angle_rad(float angle_in){
+    // Correct the angle to (-pi, pi]
+    angle_mod = angle_in % pi_2; // [0, 2pi)
+    if (angle_mod > pi){
+        angle_mod -= pi_2;
+    }else if(angle_mod <= -pi){
+        angle_mod += pi_2;
+    }
+    return angle_mod;
 }
