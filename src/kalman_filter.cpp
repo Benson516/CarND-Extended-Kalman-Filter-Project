@@ -47,10 +47,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    * TODO: update the state by using Extended Kalman Filter equations
    */
    // recover state parameters
-   float px = x_state(0);
-   float py = x_state(1);
-   float vx = x_state(2);
-   float vy = x_state(3);
+   float px = x_(0);
+   float py = x_(1);
+   float vx = x_(2);
+   float vy = x_(3);
    float rho = sqrt(px*px + py*py);
    float phi = atan2(py, px);
    float rho_dot = (px*vx + py*vy)/rho;
